@@ -45,3 +45,25 @@ while true; do
         echo "Invalid choice. Please enter Y/y or N/n."
     fi
 done
+# Additional commands
+mkdir -p /var/lib/marzban/assets/
+wget -O /var/lib/marzban/assets/geosite.dat https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat
+wget -O /var/lib/marzban/assets/geoip.dat https://github.com/v2fly/geoip/releases/latest/download/geoip.dat
+wget -O /var/lib/marzban/assets/iran.dat https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran.dat
+
+# Modify docker-compose.yml
+cat <<EOF > ~/Marzban-node/docker-compose.yml
+services:
+  marzban-node:
+    # build: .
+    image: gozargah/marzban-node:latest
+    restart: always
+    network_mode: host
+
+    volumes:
+      - /var/lib/marzban-node:/var/lib/marzban-node
+      - /var/lib/marzban/assets:/usr/local/share/xray
+EOF
+
+# Restart Docker
+docker compose down && docker compose up -d
